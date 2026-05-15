@@ -7,7 +7,7 @@ import org.koin.dsl.navigation3.navigation
 import org.koin.plugin.module.dsl.viewModel
 
 
-internal val loginModule = module {
+val loginModule = module {
     viewModel<LoginViewModel>()
 
     navigation<LoginScreen> {
