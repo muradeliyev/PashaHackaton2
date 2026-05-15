@@ -34,3 +34,5 @@ plugins {
 
 include(":desktopApp")
 include(":shared")
+include(":core")
+include(":ui-kit")

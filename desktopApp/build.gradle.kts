@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlinJvm)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.koin.compiler)
 }
 
 dependencies {
@@ -14,6 +15,7 @@ dependencies {
 
     implementation(libs.compose.uiToolingPreview)
 
+    implementation(libs.koin.annotations)
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.compose)
     implementation(libs.koin.compose.viewmodel)

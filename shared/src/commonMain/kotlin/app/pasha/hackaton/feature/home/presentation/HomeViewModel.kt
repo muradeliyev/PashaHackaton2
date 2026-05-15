@@ -1,4 +1,4 @@
-package app.pasha.hackaton.feature.presentation
+package app.pasha.hackaton.feature.home.presentation
 
 import androidx.lifecycle.ViewModel
 

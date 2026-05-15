@@ -1,15 +1,13 @@
 package app.pasha.hackaton.core.navigation.impl
 
 import androidx.compose.runtime.mutableStateListOf
-import app.pasha.hackaton.core.navigation.Screen
 import app.pasha.hackaton.core.navigation.Navigator
-import app.pasha.hackaton.presentation.home.HomeScreen
-import javax.inject.Inject
+import app.pasha.hackaton.core.navigation.Screen
 
 
-class NavigatorImpl @Inject constructor() : Navigator {
+class NavigatorImpl : Navigator {
 
-    override val backStack = mutableStateListOf<Screen>(HomeScreen())
+    override val backStack = mutableStateListOf<Screen>()
 
 
     override fun navigateTo(screen: Screen) {
