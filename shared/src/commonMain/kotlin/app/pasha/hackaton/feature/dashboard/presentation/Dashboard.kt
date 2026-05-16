@@ -1,0 +1,55 @@
+package app.pasha.hackaton.feature.dashboard.presentation
+
+import androidx.compose.ui.graphics.Color
+
+
+sealed interface DashboardState {
+    data object Loading : DashboardState
+
+    data class Ready(
+        val userName: String = "",
+        val opportunity: String = "48 250,",
+        val opportunityFraction: String = "22 ₼",
+        val opportunityGrowth: String = "+14% vs May",
+        val atRiskItem: AtRiskItem = AtRiskItem(
+            criticalCount = 0,
+            highCount = 0,
+            mediumCount = 0,
+            totalCount = 0,
+            trackedCount = 0,
+        ),
+        val predictedWaste: String = "3.2%",
+        val actionCards: List<ActionCardItem> = emptyList(),
+        val forecastRows: List<ForecastRowItem> = emptyList(),
+    ) : DashboardState
+}
+
+
+data class AtRiskItem(
+    val criticalCount: Int,
+    val highCount: Int,
+    val mediumCount: Int,
+    val totalCount: Int,
+    val trackedCount: Int,
+)
+
+
+data class ActionCardItem(
+    val items: Int,
+    val amount: String,
+    val title: String,
+    val tag: String,
+    val color: Color,
+    val backgroundColor: Color,
+)
+
+
+data class ForecastRowItem(
+    val branch: String,
+    val category: String,
+    val wasteRisk: String,
+    val level: String,
+    val salesOpp: String,
+    val aiCluster: String,
+    val isCritical: Boolean = false,
+)

@@ -11,7 +11,6 @@ class LoginUseCase(
     suspend operator fun invoke(request: LoginRequest): Result<Unit> {
         return pashaApi.login(request).mapCatching { response ->
             appStorage.saveAccessToken(response.accessToken)
-            Unit
         }
     }
 }

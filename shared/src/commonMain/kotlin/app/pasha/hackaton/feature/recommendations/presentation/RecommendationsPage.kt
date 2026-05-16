@@ -21,13 +21,26 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.pasha.hackaton.ui.kit.Typography
 import app.pasha.hackaton.ui.kit.component.ConfirmationDialog
 import app.pasha.hackaton.ui.kit.component.SecondaryButton
+import app.pasha.hackaton.ui.kit.component.ShimmerBox
 import app.pasha.hackaton.ui.kit.component.StatusBadge
 import app.pasha.hackaton.ui.kit.component.TopBar
+import app.pasha.hackaton.ui.kit.component.TopBarShimmer
 
 @Composable
 fun RecommendationsPage(viewModel: RecommendationsViewModel) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    when (val currentState = state) {
+        RecommendationState.Loading -> RecommendationsLoading()
+        is RecommendationState.Ready -> RecommendationsContent(currentState, viewModel)
+    }
+}
+
+@Composable
+private fun RecommendationsContent(
+    state: RecommendationState.Ready,
+    viewModel: RecommendationsViewModel,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -90,6 +103,141 @@ fun RecommendationsPage(viewModel: RecommendationsViewModel) {
             branch = "Sumgayit",
             onCancel = viewModel::onDismissDialog,
             onApply = viewModel::onConfirmApply
+        )
+    }
+}
+
+@Composable
+private fun RecommendationsLoading() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF7F6F6))
+            .padding(horizontal = 56.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
+        TopBarShimmer()
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(11.dp)
+        ) {
+            ShimmerBox(
+                modifier = Modifier
+                    .width(112.dp)
+                    .height(56.dp),
+                shape = RoundedCornerShape(256.dp)
+            )
+            ShimmerBox(
+                modifier = Modifier
+                    .width(136.dp)
+                    .height(56.dp),
+                shape = RoundedCornerShape(256.dp)
+            )
+        }
+
+        Spacer(Modifier.height(20.dp))
+
+        ShimmerBox(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(180.dp),
+            shape = RoundedCornerShape(24.dp)
+        )
+
+        Spacer(Modifier.height(20.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(Color.Black.copy(alpha = 0.1f))
+        )
+
+        Spacer(Modifier.height(20.dp))
+
+        repeat(3) {
+            RecommendationCardShimmer()
+            Spacer(Modifier.height(12.dp))
+        }
+
+        Spacer(Modifier.height(48.dp))
+    }
+}
+
+@Composable
+private fun RecommendationCardShimmer() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, RoundedCornerShape(24.dp))
+            .padding(24.dp),
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        ShimmerBox(
+            modifier = Modifier.size(44.dp),
+            shape = RoundedCornerShape(12.dp)
+        )
+
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(40.dp)
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    ShimmerBox(
+                        modifier = Modifier
+                            .width(240.dp)
+                            .height(20.dp)
+                    )
+                    repeat(3) {
+                        ShimmerBox(
+                            modifier = Modifier
+                                .width(86.dp)
+                                .height(24.dp),
+                            shape = RoundedCornerShape(256.dp)
+                        )
+                    }
+                }
+                ShimmerBox(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp)
+                )
+                ShimmerBox(
+                    modifier = Modifier
+                        .fillMaxWidth(0.72f)
+                        .height(20.dp)
+                )
+            }
+
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                repeat(2) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        ShimmerBox(
+                            modifier = Modifier
+                                .width(56.dp)
+                                .height(16.dp)
+                        )
+                        ShimmerBox(
+                            modifier = Modifier
+                                .width(96.dp)
+                                .height(24.dp)
+                        )
+                    }
+                }
+            }
+        }
+
+        ShimmerBox(
+            modifier = Modifier
+                .align(Alignment.Bottom)
+                .width(96.dp)
+                .height(44.dp),
+            shape = RoundedCornerShape(256.dp)
         )
     }
 }

@@ -14,12 +14,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.pasha.hackaton.ui.kit.Typography
+import app.pasha.hackaton.ui.kit.component.ShimmerBox
 import app.pasha.hackaton.ui.kit.component.TopBar
+import app.pasha.hackaton.ui.kit.component.TopBarShimmer
 
 @Composable
 fun AppliedActionsPage(viewModel: AppliedActionsViewModel) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    when (val currentState = state) {
+        AppliedActionsState.Loading -> AppliedActionsLoading()
+        is AppliedActionsState.Ready -> AppliedActionsContent(currentState)
+    }
+}
+
+@Composable
+private fun AppliedActionsContent(state: AppliedActionsState.Ready) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -43,6 +53,75 @@ fun AppliedActionsPage(viewModel: AppliedActionsViewModel) {
         ActionsTable(rows = state.actionRows)
 
         Spacer(Modifier.height(48.dp))
+    }
+}
+
+@Composable
+private fun AppliedActionsLoading() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF7F6F6))
+            .padding(horizontal = 56.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
+        TopBarShimmer()
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            repeat(4) {
+                ShimmerBox(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(184.dp),
+                    shape = RoundedCornerShape(24.dp)
+                )
+            }
+        }
+
+        Spacer(Modifier.height(20.dp))
+
+        ActionsTableShimmer()
+
+        Spacer(Modifier.height(48.dp))
+    }
+}
+
+@Composable
+private fun ActionsTableShimmer() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, RoundedCornerShape(24.dp))
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .background(Color.Black.copy(alpha = 0.08f), RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
+        )
+
+        repeat(8) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                repeat(6) { index ->
+                    ShimmerBox(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(18.dp)
+                    )
+                    if (index != 5) {
+                        Spacer(Modifier.width(20.dp))
+                    }
+                }
+            }
+        }
     }
 }
 

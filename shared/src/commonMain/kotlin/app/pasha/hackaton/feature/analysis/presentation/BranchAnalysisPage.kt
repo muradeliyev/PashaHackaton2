@@ -14,12 +14,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.pasha.hackaton.ui.kit.Typography
+import app.pasha.hackaton.ui.kit.component.ShimmerBox
 import app.pasha.hackaton.ui.kit.component.TopBar
+import app.pasha.hackaton.ui.kit.component.TopBarShimmer
 
 @Composable
 fun BranchAnalysisPage(viewModel: BranchAnalysisViewModel) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    when (val currentState = state) {
+        BranchAnalysisState.Loading -> BranchAnalysisLoading()
+        is BranchAnalysisState.Ready -> BranchAnalysisContent(currentState)
+    }
+}
+
+@Composable
+private fun BranchAnalysisContent(state: BranchAnalysisState.Ready) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -50,6 +60,77 @@ fun BranchAnalysisPage(viewModel: BranchAnalysisViewModel) {
         MetricSection(title = "Sales opportunity", items = state.salesOpportunities)
 
         Spacer(Modifier.height(48.dp))
+    }
+}
+
+@Composable
+private fun BranchAnalysisLoading() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF7F6F6))
+            .padding(horizontal = 56.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
+        TopBarShimmer()
+
+        Row(modifier = Modifier.fillMaxWidth()) {
+            ShimmerBox(
+                modifier = Modifier
+                    .width(132.dp)
+                    .height(56.dp),
+                shape = RoundedCornerShape(256.dp)
+            )
+        }
+
+        Spacer(Modifier.height(20.dp))
+
+        MetricSectionShimmer()
+
+        Spacer(Modifier.height(20.dp))
+
+        MetricSectionShimmer()
+
+        Spacer(Modifier.height(48.dp))
+    }
+}
+
+@Composable
+private fun MetricSectionShimmer() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, RoundedCornerShape(24.dp))
+            .padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        ShimmerBox(
+            modifier = Modifier
+                .width(220.dp)
+                .height(24.dp)
+        )
+
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            repeat(4) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(81.dp)
+                ) {
+                    ShimmerBox(
+                        modifier = Modifier
+                            .width(80.dp)
+                            .height(20.dp)
+                    )
+                    ShimmerBox(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(36.dp),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                }
+            }
+        }
     }
 }
 

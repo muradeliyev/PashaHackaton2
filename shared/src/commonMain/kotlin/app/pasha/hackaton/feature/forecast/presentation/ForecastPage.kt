@@ -27,12 +27,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.pasha.hackaton.ui.kit.Typography
+import app.pasha.hackaton.ui.kit.component.ShimmerBox
 import app.pasha.hackaton.ui.kit.component.TopBar
+import app.pasha.hackaton.ui.kit.component.TopBarShimmer
 
 @Composable
 fun ForecastPage(viewModel: ForecastViewModel) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    when (val currentState = state) {
+        ForecastState.Loading -> ForecastLoading()
+        is ForecastState.Ready -> ForecastContent(currentState)
+    }
+}
+
+@Composable
+private fun ForecastContent(state: ForecastState.Ready) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -64,6 +74,84 @@ fun ForecastPage(viewModel: ForecastViewModel) {
         Spacer(Modifier.size(20.dp))
 
         ChartSection()
+
+        Spacer(Modifier.size(48.dp))
+    }
+}
+
+@Composable
+private fun ForecastLoading() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF7F6F6))
+            .padding(horizontal = 56.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
+        TopBarShimmer()
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            ShimmerBox(
+                modifier = Modifier
+                    .width(124.dp)
+                    .height(56.dp),
+                shape = RoundedCornerShape(28.dp)
+            )
+            ShimmerBox(
+                modifier = Modifier
+                    .width(156.dp)
+                    .height(56.dp),
+                shape = RoundedCornerShape(28.dp)
+            )
+        }
+
+        Spacer(Modifier.size(24.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            repeat(4) {
+                ShimmerBox(
+                    modifier = Modifier
+                        .width(230.dp)
+                        .height(184.dp),
+                    shape = RoundedCornerShape(24.dp)
+                )
+            }
+        }
+
+        Spacer(Modifier.size(20.dp))
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White, RoundedCornerShape(24.dp))
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                ShimmerBox(
+                    modifier = Modifier
+                        .width(160.dp)
+                        .height(16.dp)
+                )
+                ShimmerBox(
+                    modifier = Modifier
+                        .width(220.dp)
+                        .height(24.dp)
+                )
+            }
+            ShimmerBox(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp),
+                shape = RoundedCornerShape(8.dp)
+            )
+        }
 
         Spacer(Modifier.size(48.dp))
     }

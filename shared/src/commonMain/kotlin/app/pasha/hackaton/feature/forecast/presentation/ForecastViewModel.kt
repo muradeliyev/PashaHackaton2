@@ -14,19 +14,31 @@ import org.koin.core.component.inject
 class ForecastViewModel(
     private val navigator: Navigator,
     private val userRepository: UserRepository,
-) : ViewModel(), Stateful<ForecastState> by statefulViewModel(ForecastState()), KoinComponent {
+) : ViewModel(), Stateful<ForecastState> by statefulViewModel(ForecastState.Loading), KoinComponent {
 
     private val dashboardScreen: DashboardScreen by inject()
 
     init {
         observeUser()
+        loadData()
     }
 
     private fun observeUser() {
         viewModelScope.launch {
             userRepository.userName.collect { name ->
-                updateState { it.copy(userName = name) }
+                updateState { state ->
+                    when (state) {
+                        ForecastState.Loading -> ForecastState.Loading
+                        is ForecastState.Ready -> state.copy(userName = name)
+                    }
+                }
             }
+        }
+    }
+
+    private fun loadData() {
+        viewModelScope.launch {
+            updateState { ForecastState.Ready() }
         }
     }
 
@@ -36,11 +48,21 @@ class ForecastViewModel(
                 if (intent.index == 0) {
                     navigator.navigateTo(dashboardScreen)
                 } else {
-                    updateState { it.copy(selectedSidebarIndex = intent.index) }
+                    updateState { state ->
+                        when (state) {
+                            ForecastState.Loading -> state
+                            is ForecastState.Ready -> state.copy(selectedSidebarIndex = intent.index)
+                        }
+                    }
                 }
             }
             is ForecastIntent.SelectVenue -> {
-                updateState { it.copy(selectedVenue = intent.venue) }
+                updateState { state ->
+                    when (state) {
+                        ForecastState.Loading -> state
+                        is ForecastState.Ready -> state.copy(selectedVenue = intent.venue)
+                    }
+                }
             }
             ForecastIntent.Logout -> {
                 navigator.back()

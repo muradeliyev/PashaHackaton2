@@ -1,6 +1,8 @@
 package app.pasha.hackaton.core.network.impl
 
 import app.pasha.hackaton.core.network.api.PashaApi
+import app.pasha.hackaton.core.network.model.ForecastRequest
+import app.pasha.hackaton.core.network.model.ForecastResponse
 import app.pasha.hackaton.core.network.model.LoginRequest
 import app.pasha.hackaton.core.network.model.LoginResponse
 import app.pasha.hackaton.core.network.model.UserInfoResponse
@@ -33,9 +35,18 @@ class PashaApiImpl(
         }
     }
 
-    override suspend fun predictForecast(request: PredictionRequest): Result<PredictionResponse> {
+    override suspend fun predict(request: PredictionRequest): Result<PredictionResponse> {
         return runCatching {
             httpClient.post("v1/forecast/predict") {
+                contentType(ContentType.Application.Json)
+                setBody(request)
+            }.body()
+        }
+    }
+
+    override suspend fun forecast(request: ForecastRequest): Result<ForecastResponse> {
+        return runCatching {
+            httpClient.post("v1/forecast") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }.body()

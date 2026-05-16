@@ -33,13 +33,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.pasha.hackaton.ui.kit.Typography
+import app.pasha.hackaton.ui.kit.component.ShimmerBox
 import app.pasha.hackaton.ui.kit.component.StatusBadge
 import app.pasha.hackaton.ui.kit.component.TopBar
+import app.pasha.hackaton.ui.kit.component.TopBarShimmer
 
 @Composable
 fun DashboardPage(viewModel: DashboardViewModel) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    when (val currentState = state) {
+        DashboardState.Loading -> DashboardLoading()
+        is DashboardState.Ready -> DashboardContent(currentState)
+    }
+}
+
+@Composable
+private fun DashboardContent(state: DashboardState.Ready) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -58,17 +68,12 @@ fun DashboardPage(viewModel: DashboardViewModel) {
                 fraction = state.opportunityFraction,
                 growth = state.opportunityGrowth
             )
-            AtRiskCard(
-                total = state.atRiskTotal,
-                tracked = state.atRiskTracked,
-                items = state.atRiskItems
-            )
+            AtRiskCard(state.atRiskItem)
             WasteCard(predictedWaste = state.predictedWaste)
         }
 
         Spacer(Modifier.size(40.dp))
 
-        // Divider
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -103,6 +108,131 @@ fun DashboardPage(viewModel: DashboardViewModel) {
 }
 
 @Composable
+private fun DashboardLoading() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF7F6F6))
+            .padding(horizontal = 56.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
+        TopBarShimmer()
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            ShimmerBox(
+                modifier = Modifier
+                    .width(500.dp)
+                    .height(256.dp),
+                shape = RoundedCornerShape(24.dp)
+            )
+            ShimmerBox(
+                modifier = Modifier.size(256.dp),
+                shape = RoundedCornerShape(24.dp)
+            )
+            ShimmerBox(
+                modifier = Modifier.size(256.dp),
+                shape = RoundedCornerShape(24.dp)
+            )
+        }
+
+        Spacer(Modifier.size(40.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(Color.Black.copy(alpha = 0.1f))
+        )
+
+        Spacer(Modifier.size(40.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            repeat(3) {
+                ShimmerBox(
+                    modifier = Modifier
+                        .width(330.dp)
+                        .height(184.dp),
+                    shape = RoundedCornerShape(24.dp)
+                )
+            }
+        }
+
+        Spacer(Modifier.size(20.dp))
+
+        ForecastTableShimmer()
+
+        Spacer(Modifier.size(48.dp))
+    }
+}
+
+@Composable
+private fun ForecastTableShimmer() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, RoundedCornerShape(24.dp))
+            .clip(RoundedCornerShape(24.dp))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            ShimmerBox(
+                modifier = Modifier
+                    .width(180.dp)
+                    .height(24.dp)
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                repeat(4) {
+                    ShimmerBox(
+                        modifier = Modifier
+                            .width(120.dp)
+                            .height(36.dp),
+                        shape = RoundedCornerShape(256.dp)
+                    )
+                }
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(36.dp)
+                .background(Color.Black.copy(alpha = 0.04f))
+        )
+
+        repeat(5) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                repeat(6) { index ->
+                    ShimmerBox(
+                        modifier = Modifier
+                            .weight(if (index == 5) 0.8f else 1f)
+                            .height(18.dp)
+                    )
+                    if (index != 5) {
+                        Spacer(Modifier.width(20.dp))
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun OpportunityCard(amount: String, fraction: String, growth: String) {
     Column(
         modifier = Modifier
@@ -133,7 +263,7 @@ fun OpportunityCard(amount: String, fraction: String, growth: String) {
 }
 
 @Composable
-fun AtRiskCard(total: Int, tracked: Int, items: List<AtRiskItem>) {
+fun AtRiskCard(item: AtRiskItem) {
     Column(
         modifier = Modifier
             .size(256.dp)
@@ -144,22 +274,26 @@ fun AtRiskCard(total: Int, tracked: Int, items: List<AtRiskItem>) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text("At risk items", style = Typography.l1, color = Color.Black.copy(alpha = 0.5f))
             Row(verticalAlignment = Alignment.Bottom) {
-                Text("$total ", style = Typography.h0)
-                Text("of $tracked tracked", style = Typography.l2m, color = Color.Black.copy(alpha = 0.5f))
+                Text("${item.trackedCount} ", style = Typography.h0)
+                Text("of ${item.totalCount} tracked", style = Typography.l2m, color = Color.Black.copy(alpha = 0.5f))
             }
         }
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            items.forEach { item ->
-                AtRiskRow(item.label, item.count, item.color, item.backgroundColor)
-            }
+            AtRiskRow("Critical", item.criticalCount, Color(0xFF92301B), Color(0xFFF9E5DC))
+            AtRiskRow("High", item.highCount, Color(0xFF7B550B), Color(0xFFFBECC8))
+            AtRiskRow("Medium", item.mediumCount, Color(0xFF1C4EA3), Color(0xFFE7F0FF))
         }
     }
 }
 
 @Composable
 fun AtRiskRow(label: String, count: Int, color: Color, backgroundColor: Color) {
-    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
         StatusBadge(label, color, backgroundColor)
         Text(count.toString(), style = Typography.l1m)
     }
