@@ -194,7 +194,6 @@ fun RecommendationCard(item: RecommendationItem, onApply: () -> Unit) {
 
         SecondaryButton(
             onClick = onApply,
-            modifier = Modifier.align(Alignment.Bottom)
         ) {
             Text("Apply", style = Typography.l1)
         }

@@ -127,7 +127,7 @@ fun ConfirmationDialog(
                 horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.End),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                SecondaryButton(onClick = onCancel) {
+                SecondaryButton(onClick = onCancel, modifier = Modifier.fillMaxWidth()) {
                     Text("Cancel", style = Typography.l1)
                 }
                 MainButton(

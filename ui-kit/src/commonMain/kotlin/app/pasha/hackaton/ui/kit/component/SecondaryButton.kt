@@ -24,7 +24,7 @@ fun SecondaryButton(
             containerColor = Color.White,
             contentColor = Color.Black
         ),
-        modifier = modifier.fillMaxWidth().height(56.dp),
+        modifier = modifier.height(56.dp),
         content = content,
     )
 }
