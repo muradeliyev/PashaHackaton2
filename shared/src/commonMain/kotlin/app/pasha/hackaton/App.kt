@@ -74,7 +74,8 @@ fun App() {
                             }
                         },
                         onLogout = {
-                            navigator.back()
+                            navigator.backStack.clear()
+                            navigator.navigateTo(loginScreen)
                         }
                     )
                 }

@@ -113,7 +113,10 @@ class LoginScreen(private val viewModel: LoginViewModel) : Screen {
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     if (state.isLoading) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(
+                            color = Color(0xffFFFFFF),
+                            modifier = Modifier.size(32.dp)
+                        )
                     } else {
                         Text("Login")
                     }

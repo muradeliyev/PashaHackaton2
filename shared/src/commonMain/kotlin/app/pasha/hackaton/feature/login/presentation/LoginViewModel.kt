@@ -58,6 +58,8 @@ class LoginViewModel(
                     val message = result.exceptionOrNull()?.message ?: "Unknown error occurred"
                     errorReporter.reportError(message)
                 }
+                updateState { it.copy(username = "", password = "") }
+
             } finally {
                 updateState { it.copy(isLoading = false) }
             }
