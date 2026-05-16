@@ -1,16 +1,11 @@
 package app.pasha.hackaton.feature.login.presentation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -19,13 +14,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +29,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.pasha.hackaton.core.navigation.Screen
 import app.pasha.hackaton.ui.kit.Typography
 import app.pasha.hackaton.ui.kit.component.InputField
@@ -49,8 +41,7 @@ class LoginScreen(private val viewModel: LoginViewModel) : Screen {
 
     @Composable
     override fun Content() {
-        var username by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
+        val state by viewModel.state.collectAsStateWithLifecycle()
         var isPasswordVisible by remember { mutableStateOf(false) }
 
         Box(
@@ -87,16 +78,16 @@ class LoginScreen(private val viewModel: LoginViewModel) : Screen {
                 Spacer(Modifier.size(48.dp))
 
                 InputField(
-                    value = username,
-                    onValueChange = { username = it },
+                    value = state.username,
+                    onValueChange = { viewModel.onIntent(LoginIntent.UpdateUsername(it)) },
                     placeHolderText = "Username"
                 )
 
                 Spacer(Modifier.size(12.dp))
 
                 InputField(
-                    value = password,
-                    onValueChange = { password = it },
+                    value = state.password,
+                    onValueChange = { viewModel.onIntent(LoginIntent.UpdatePassword(it)) },
                     placeHolderText = "Password",
                     trailingIcon = {
                         IconButton(
@@ -115,7 +106,7 @@ class LoginScreen(private val viewModel: LoginViewModel) : Screen {
                 Spacer(Modifier.size(24.dp))
 
                 MainButton(
-                    onClick = {}, // TODO: implement click logic
+                    onClick = { viewModel.onIntent(LoginIntent.Login) },
                     content = {
                         Text("Login")
                     }

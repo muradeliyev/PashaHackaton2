@@ -3,6 +3,7 @@ package app.pasha.hackaton.di
 import app.pasha.hackaton.core.navigation.Navigator
 import app.pasha.hackaton.core.navigation.impl.NavigatorImpl
 import app.pasha.hackaton.feature.home.di.homeModule
+import app.pasha.hackaton.feature.home.presentation.HomeScreen
 import app.pasha.hackaton.feature.login.di.loginModule
 import app.pasha.hackaton.feature.login.presentation.LoginScreen
 import org.koin.core.context.startKoin
@@ -16,6 +17,7 @@ import org.koin.plugin.module.dsl.single
 val coreModule = module {
     single<NavigatorImpl>().bind(Navigator::class)
     factory<LoginScreen>()
+    factory<HomeScreen>()
 }
 
 fun setupKoin() {
