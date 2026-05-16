@@ -7,7 +7,7 @@ import org.koin.dsl.navigation3.navigation
 import org.koin.core.module.dsl.viewModel
 
 val appliedActionsModule = module {
-    viewModel { AppliedActionsViewModel(get(), get()) }
+    viewModel { AppliedActionsViewModel(get(), get(), get(), get()) }
     single { AppliedActionsScreen() }
 
     navigation<AppliedActionsScreen> {

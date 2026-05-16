@@ -20,7 +20,7 @@ import kotlinx.serialization.json.Json
 import org.koin.dsl.module
 
 
-private const val BASE_URL = "https://multimedia-compile-drums-addition.trycloudflare.com/"
+private const val BASE_URL = "https://replica-thinkpad-juan-bent.trycloudflare.com/"
 
 
 val coreDiModule = module {

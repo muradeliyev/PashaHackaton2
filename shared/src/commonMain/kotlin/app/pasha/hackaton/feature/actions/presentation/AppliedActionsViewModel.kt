@@ -2,49 +2,46 @@ package app.pasha.hackaton.feature.actions.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.pasha.hackaton.core.error.ErrorReporter
 import app.pasha.hackaton.core.mvi.Stateful
 import app.pasha.hackaton.core.mvi.statefulViewModel
 import app.pasha.hackaton.core.navigation.Navigator
+import app.pasha.hackaton.core.network.api.PashaApi
+import app.pasha.hackaton.core.network.model.ActionHistoryItem
+import app.pasha.hackaton.core.network.model.ActionHistoryRequest
 import app.pasha.hackaton.core.storage.UserRepository
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
+
+private const val DefaultBranch = "yasamal"
 
 sealed interface AppliedActionsState {
     data object Loading : AppliedActionsState
 
     data class Ready(
         val userName: String = "",
-        val summaryCards: List<SummaryCardItem> = listOf(
-            SummaryCardItem("Active", "8"),
-            SummaryCardItem("Applied - Last 14 days", "14"),
-            SummaryCardItem("Estimated lift", "32 450₼"),
-            SummaryCardItem("Waste change", "-1.2%")
-        ),
-        val actionRows: List<ActionRowItem> = listOf(
-            ActionRowItem("Sumgayit", "Vegetables", "Discount", "Ravan Alasgarov", "13 May 2026", "Active"),
-            ActionRowItem("Ganja", "Fruits", "No Discount", "Aysel Mammadova", "15 May 2026", "Active"),
-            ActionRowItem("Lankaran", "Dairy", "20% Off", "Orkhan Hajiyev", "16 May 2026", "Inactive"),
-            ActionRowItem("Baku", "Grains", "Buy 1 Get 1", "Nigar Akperova", "17 May 2026", "Active"),
-            ActionRowItem("Mingachevir", "Meat", "10% Off", "Ilham Rustamov", "18 May 2026", "Active"),
-            ActionRowItem("Sheki", "Fish", "No Discount", "Gulnara Veliyeva", "19 May 2026", "Inactive"),
-            ActionRowItem("Goychay", "Pulses", "15% Off", "Kamran Jafarov", "20 May 2026", "Active"),
-            ActionRowItem("Shamkir", "Spices", "10% Off", "Fidan Azizova", "21 May 2026", "Inactive"),
-            ActionRowItem("Zagatala", "Nuts", "5% Off", "Rashad Mammadov", "22 May 2026", "Active"),
-            ActionRowItem("Seki", "Beverages", "No Discount", "Sahil Bayramov", "23 May 2026", "Active"),
-            ActionRowItem("Beylagan", "Bakery", "Special Offer", "Leyla Asadova", "24 May 2026", "Active"),
-            ActionRowItem("Goygol", "Sweets", "30% Off", "Eldar Quliyev", "25 May 2026", "Inactive"),
-            ActionRowItem("Khalaj", "Frozen Foods", "20% Off", "Naila Rahimova", "26 May 2026", "Active")
-        )
+        val branch: String = DefaultBranch,
+        val summaryCards: List<SummaryCardItem> = emptyList(),
+        val actionRows: List<ActionRowItem> = emptyList(),
     ) : AppliedActionsState
 }
 
 data class SummaryCardItem(val title: String, val value: String)
-data class ActionRowItem(val branch: String, val category: String, val action: String, val appliedBy: String, val date: String, val status: String)
+data class ActionRowItem(
+    val branch: String,
+    val family: String,
+    val actionType: String,
+    val appliedBy: String,
+    val appliedAt: String,
+    val note: String,
+    val status: String,
+)
 
 class AppliedActionsViewModel(
     private val navigator: Navigator,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val pashaApi: PashaApi,
+    private val errorReporter: ErrorReporter,
 ) : ViewModel(), Stateful<AppliedActionsState> by statefulViewModel(AppliedActionsState.Loading), KoinComponent {
 
     init {
@@ -54,7 +51,29 @@ class AppliedActionsViewModel(
 
     private fun loadData() {
         viewModelScope.launch {
-            updateState { AppliedActionsState.Ready() }
+            val result = pashaApi.getActionHistory(ActionHistoryRequest(branch = DefaultBranch, ""))
+
+            result.onSuccess { response ->
+                val rows = response.items.map { it.toActionRowItem() }
+                updateState {
+                    AppliedActionsState.Ready(
+                        userName = userRepository.userName.value,
+                        branch = DefaultBranch,
+                        summaryCards = rows.toSummaryCards(DefaultBranch),
+                        actionRows = rows,
+                    )
+                }
+            }.onFailure { throwable ->
+                errorReporter.reportError(throwable.message ?: "Failed to load applied actions")
+                updateState {
+                    AppliedActionsState.Ready(
+                        userName = userRepository.userName.value,
+                        branch = DefaultBranch,
+                        summaryCards = emptyList<ActionRowItem>().toSummaryCards(DefaultBranch),
+                        actionRows = emptyList(),
+                    )
+                }
+            }
         }
     }
 
@@ -64,10 +83,76 @@ class AppliedActionsViewModel(
                 updateState {
                     when (it) {
                         AppliedActionsState.Loading -> AppliedActionsState.Loading
-                        is AppliedActionsState.Ready -> AppliedActionsState.Ready(userName = name)
+                        is AppliedActionsState.Ready -> it.copy(userName = name)
                     }
                 }
             }
         }
     }
+
+    private fun ActionHistoryItem.toActionRowItem(): ActionRowItem {
+        return ActionRowItem(
+            branch = branch,
+            family = family,
+            actionType = actionType,
+            appliedBy = appliedBy,
+            appliedAt = appliedAt.toHumanReadableDateTime(),
+            note = note,
+            status = status,
+        )
+    }
+
+    private fun List<ActionRowItem>.toSummaryCards(branch: String): List<SummaryCardItem> {
+        return listOf(
+            SummaryCardItem("Active", count { it.status.equals("Active", ignoreCase = true) }.toString()),
+            SummaryCardItem("Applied actions", size.toString()),
+            SummaryCardItem("Branch", branch),
+            SummaryCardItem("Latest action", firstOrNull()?.appliedAt.orEmpty().ifBlank { "-" }),
+        )
+    }
+
 }
+
+private fun String.toHumanReadableDateTime(): String {
+    val dateAndTime = trim()
+    if (dateAndTime.isBlank()) return "-"
+
+    val datePart = dateAndTime.substringBefore('T').takeIf { it != dateAndTime }
+        ?: dateAndTime.substringBefore(' ')
+    val dateSegments = datePart.split("-")
+    if (dateSegments.size != 3) return dateAndTime
+
+    val year = dateSegments[0].toIntOrNull() ?: return dateAndTime
+    val month = dateSegments[1].toIntOrNull() ?: return dateAndTime
+    val day = dateSegments[2].toIntOrNull() ?: return dateAndTime
+    val monthName = monthNames.getOrNull(month - 1) ?: return dateAndTime
+
+    val formattedDate = "$day $monthName $year"
+    val timePart = dateAndTime
+        .substringAfter('T', missingDelimiterValue = "")
+        .ifBlank { dateAndTime.substringAfter(' ', missingDelimiterValue = "") }
+        .substringBefore('.')
+        .removeSuffix("Z")
+        .take(5)
+
+    return if (timePart.length == 5) {
+        "$formattedDate, $timePart"
+    } else {
+        formattedDate
+    }
+}
+
+private val monthNames = listOf(
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+)

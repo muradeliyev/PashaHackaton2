@@ -1,16 +1,19 @@
 package app.pasha.hackaton.core.network.impl
 
 import app.pasha.hackaton.core.network.api.PashaApi
+import app.pasha.hackaton.core.network.model.ActionHistoryRequest
+import app.pasha.hackaton.core.network.model.ActionHistoryResponse
 import app.pasha.hackaton.core.network.model.ForecastRequest
 import app.pasha.hackaton.core.network.model.ForecastResponse
 import app.pasha.hackaton.core.network.model.LoginRequest
 import app.pasha.hackaton.core.network.model.LoginResponse
-import app.pasha.hackaton.core.network.model.UserInfoResponse
 import app.pasha.hackaton.core.network.model.PredictionRequest
 import app.pasha.hackaton.core.network.model.PredictionResponse
+import app.pasha.hackaton.core.network.model.UserInfoResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -49,6 +52,16 @@ class PashaApiImpl(
             httpClient.post("v1/forecast") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
+            }.body()
+        }
+    }
+
+    override suspend fun getActionHistory(request: ActionHistoryRequest): Result<ActionHistoryResponse> {
+        return runCatching {
+            httpClient.get("v1/actions/history") {
+                contentType(ContentType.Application.Json)
+                parameter("branch", value = request.branch)
+                parameter("family", value = request.family)
             }.body()
         }
     }
