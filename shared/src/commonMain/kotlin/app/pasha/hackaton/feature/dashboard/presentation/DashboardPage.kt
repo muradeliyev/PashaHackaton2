@@ -1,4 +1,4 @@
-package app.pasha.hackaton.feature.home.presentation
+package app.pasha.hackaton.feature.dashboard.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,12 +32,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.pasha.hackaton.ui.kit.Typography
-import app.pasha.hackaton.ui.kit.component.Sidebar
 import app.pasha.hackaton.ui.kit.component.StatusBadge
 import app.pasha.hackaton.ui.kit.component.TopBar
 
 @Composable
-fun HomePage(viewModel: HomeViewModel) {
+fun DashboardPage(viewModel: DashboardViewModel) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     Column(

@@ -8,7 +8,7 @@ import app.pasha.hackaton.core.mvi.statefulViewModel
 import app.pasha.hackaton.core.navigation.Navigator
 import app.pasha.hackaton.core.network.model.LoginRequest
 import app.pasha.hackaton.domain.auth.LoginUseCase
-import app.pasha.hackaton.feature.home.presentation.HomeScreen
+import app.pasha.hackaton.feature.dashboard.presentation.DashboardScreen
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -19,7 +19,7 @@ class LoginViewModel(
     private val errorReporter: ErrorReporter
 ) : ViewModel(), Stateful<LoginState> by statefulViewModel(LoginState()), KoinComponent {
 
-    private val homeScreen: HomeScreen by inject()
+    private val dashboardScreen: DashboardScreen by inject()
 
     fun onIntent(intent: LoginIntent) {
         when (intent) {
@@ -53,7 +53,7 @@ class LoginViewModel(
                 )
 
                 if (result.isSuccess) {
-                    navigator.navigateTo(homeScreen)
+                    navigator.navigateTo(dashboardScreen)
                 } else {
                     val message = result.exceptionOrNull()?.message ?: "Unknown error occurred"
                     errorReporter.reportError(message)

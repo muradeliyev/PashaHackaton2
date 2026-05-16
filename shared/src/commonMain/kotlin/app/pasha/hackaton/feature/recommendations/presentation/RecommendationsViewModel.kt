@@ -7,7 +7,7 @@ import app.pasha.hackaton.core.mvi.Stateful
 import app.pasha.hackaton.core.mvi.statefulViewModel
 import app.pasha.hackaton.core.navigation.Navigator
 import app.pasha.hackaton.feature.forecast.presentation.ForecastScreen
-import app.pasha.hackaton.feature.home.presentation.HomeScreen
+import app.pasha.hackaton.feature.dashboard.presentation.DashboardScreen
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -77,12 +77,12 @@ class RecommendationsViewModel(
     private val errorReporter: ErrorReporter
 ) : ViewModel(), Stateful<RecommendationState> by statefulViewModel(RecommendationState()), KoinComponent {
 
-    private val homeScreen: HomeScreen by inject()
+    private val dashboardScreen: DashboardScreen by inject()
     private val forecastScreen: ForecastScreen by inject()
 
     fun onSidebarItemClick(index: Int) {
         when (index) {
-            0 -> navigator.navigateTo(homeScreen)
+            0 -> navigator.navigateTo(dashboardScreen)
             1 -> navigator.navigateTo(forecastScreen)
             2 -> {} // Already here
             else -> {

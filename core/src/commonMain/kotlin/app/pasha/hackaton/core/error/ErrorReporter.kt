@@ -14,7 +14,8 @@ class ErrorReporterImpl : ErrorReporter {
     override val errorState: State<String?> = _errorState
 
     override fun reportError(message: String) {
-        _errorState.value = message
+        _errorState.value = "Unexpected Error Occurred"
+        println("[Brave](Error) $message")
     }
 
     override fun clearError() {

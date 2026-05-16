@@ -13,3 +13,9 @@ data class LoginResponse(
     val accessToken: String,
     val expiresIn: Int
 )
+
+@Serializable
+data class UserInfoResponse(
+    val id: Int,
+    val username: String
+)
