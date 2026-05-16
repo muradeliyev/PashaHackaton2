@@ -24,10 +24,13 @@ import app.pasha.hackaton.feature.actions.presentation.AppliedActionsScreen
 import app.pasha.hackaton.feature.analysis.presentation.BranchAnalysisScreen
 import app.pasha.hackaton.ui.kit.component.Sidebar
 import app.pasha.hackaton.ui.kit.component.ErrorDialog
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.getKoin
 import org.koin.compose.koinInject
 import org.koin.compose.navigation3.koinEntryProvider
 import org.koin.core.annotation.KoinExperimentalAPI
+import pashahackaton2.shared.generated.resources.Res
+import pashahackaton2.shared.generated.resources.brand
 
 @OptIn(KoinExperimentalAPI::class)
 @Composable
@@ -53,7 +56,7 @@ fun App() {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(if (isSidebarVisible) Color(0xFFF7F6F6) else Color.White)
+//                    .background(if (isSidebarVisible) Color(0xFFF7F6F6) else Color.White)
             ) {
                 if (isSidebarVisible) {
                     val sidebarItems = listOf("Dashboard", "Forecast", "Recommendations", "Applied actions", "Branch analysis")
@@ -81,7 +84,8 @@ fun App() {
                         onLogout = {
                             navigator.backStack.clear()
                             navigator.navigateTo(koin.get<LoginScreen>())
-                        }
+                        },
+                        painter = painterResource(Res.drawable.brand),
                     )
                 }
 

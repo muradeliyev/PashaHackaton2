@@ -20,7 +20,7 @@ fun MainButton(
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(10.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xff26B2FE)),
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xff8CC73E)),
         modifier = modifier.height(56.dp),
         content = content,
     )

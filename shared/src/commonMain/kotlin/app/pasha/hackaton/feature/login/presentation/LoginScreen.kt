@@ -1,5 +1,6 @@
 package app.pasha.hackaton.feature.login.presentation
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -34,9 +36,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.pasha.hackaton.core.navigation.Screen
 import app.pasha.hackaton.ui.kit.Typography
+import app.pasha.hackaton.ui.kit.component.BrandLogo
 import app.pasha.hackaton.ui.kit.component.InputField
 import app.pasha.hackaton.ui.kit.component.MainButton
 import app.pasha.hackaton.ui.kit.icon.IcFlag
+import org.jetbrains.compose.resources.painterResource
+import pashahackaton2.shared.generated.resources.Res
+import pashahackaton2.shared.generated.resources.brand
 
 
 class LoginScreen(private val viewModel: LoginViewModel) : Screen {
@@ -51,6 +57,12 @@ class LoginScreen(private val viewModel: LoginViewModel) : Screen {
             contentAlignment = Alignment.Center,
         ) {
             // ... (rest of the content)
+            BrandLogo(
+                modifier = Modifier
+                    .align(Alignment.TopStart),
+                painterResource(Res.drawable.brand)
+            )
+
             Row(
                 modifier = Modifier
                     .align(Alignment.TopEnd)

@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import app.pasha.hackaton.ui.kit.Typography
 
@@ -21,29 +22,35 @@ fun Sidebar(
     items: List<String>,
     selectedIndex: Int,
     onItemClick: (Int) -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    painter: Painter,
 ) {
     Column(
         modifier = Modifier
-            .width(256.dp)
-            .fillMaxHeight()
-            .padding(vertical = 48.dp, horizontal = 24.dp),
-        verticalArrangement = Arrangement.SpaceBetween
+            .width(360.dp)
+            .fillMaxHeight(),
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            items.forEachIndexed { index, title ->
-                SidebarItem(
-                    title = title,
-                    isSelected = index == selectedIndex,
-                    onClick = { onItemClick(index) }
-                )
+        BrandLogo(painter = painter)
+
+        Column(
+            Modifier.fillMaxHeight().padding(48.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                items.forEachIndexed { index, title ->
+                    SidebarItem(
+                        title = title,
+                        isSelected = index == selectedIndex,
+                        onClick = { onItemClick(index) }
+                    )
+                }
+            }
+
+            SecondaryButton(onClick = onLogout) {
+                Text("Log out", style = Typography.l1)
             }
         }
-
-        SecondaryButton(onClick = onLogout) {
-            Text("Log out", style = Typography.l1)
         }
-    }
 }
 
 @Composable
