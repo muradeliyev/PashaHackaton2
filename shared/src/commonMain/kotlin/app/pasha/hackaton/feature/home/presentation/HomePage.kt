@@ -1,0 +1,464 @@
+package app.pasha.hackaton.feature.home.presentation
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.pasha.hackaton.ui.kit.Typography
+import app.pasha.hackaton.ui.kit.component.SecondaryButton
+
+@Composable
+fun HomePage(viewModel: HomeViewModel) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF7F6F6))
+    ) {
+        Sidebar(
+            items = state.sidebarItems,
+            selectedIndex = state.selectedSidebarIndex,
+            onItemClick = viewModel::onSidebarItemClick,
+            onLogout = viewModel::logout
+        )
+
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .padding(horizontal = 56.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
+            TopBar(userName = state.userName)
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                OpportunityCard(
+                    amount = state.opportunity,
+                    fraction = state.opportunityFraction,
+                    growth = state.opportunityGrowth
+                )
+                AtRiskCard(
+                    total = state.atRiskTotal,
+                    tracked = state.atRiskTracked,
+                    items = state.atRiskItems
+                )
+                WasteCard(predictedWaste = state.predictedWaste)
+            }
+
+            Spacer(Modifier.size(40.dp))
+
+            // Divider
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(Color.Black.copy(alpha = 0.1f))
+            )
+
+            Spacer(Modifier.size(40.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                state.actionCards.forEach { card ->
+                    ActionCard(
+                        items = card.items,
+                        amount = card.amount,
+                        title = card.title,
+                        tag = card.tag,
+                        color = card.color,
+                        backgroundColor = card.backgroundColor
+                    )
+                }
+            }
+
+            Spacer(Modifier.size(20.dp))
+
+            ForecastTable(rows = state.forecastRows)
+
+            Spacer(Modifier.size(48.dp))
+        }
+    }
+}
+
+@Composable
+fun Sidebar(
+    items: List<String>,
+    selectedIndex: Int,
+    onItemClick: (Int) -> Unit,
+    onLogout: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .width(256.dp)
+            .fillMaxHeight()
+            .padding(vertical = 48.dp, horizontal = 24.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            items.forEachIndexed { index, title ->
+                SidebarItem(
+                    title = title,
+                    isSelected = index == selectedIndex,
+                    onClick = { onItemClick(index) }
+                )
+            }
+        }
+
+        SecondaryButton(onClick = onLogout) {
+            Text("Log out", style = Typography.l1)
+        }
+    }
+}
+
+@Composable
+fun SidebarItem(title: String, isSelected: Boolean, onClick: () -> Unit) {
+    Text(
+        text = title,
+        style = if (isSelected) Typography.h4 else Typography.s1,
+        color = if (isSelected) Color.Black else Color.Black.copy(alpha = 0.4f),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(vertical = 10.dp)
+    )
+}
+
+@Composable
+fun TopBar(userName: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 48.dp, bottom = 40.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(56.dp)
+                .background(Color.White, CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(Icons.Default.Menu, contentDescription = null)
+        }
+
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .height(56.dp)
+                .background(Color.White, RoundedCornerShape(28.dp))
+                .padding(horizontal = 20.dp),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            Text("Search", style = Typography.l1, color = Color.Black.copy(alpha = 0.5f))
+        }
+
+        Box(
+            modifier = Modifier
+                .size(56.dp)
+                .background(Color.White, CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(Icons.Default.Notifications, contentDescription = null)
+        }
+
+        Box(
+            modifier = Modifier
+                .width(1.dp)
+                .height(43.dp)
+                .background(Color.Black.copy(alpha = 0.1f))
+        )
+
+        Box(
+            modifier = Modifier
+                .height(56.dp)
+                .background(Color.White, RoundedCornerShape(28.dp))
+                .padding(horizontal = 20.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(userName, style = Typography.l1)
+        }
+    }
+}
+
+@Composable
+fun OpportunityCard(amount: String, fraction: String, growth: String) {
+    Column(
+        modifier = Modifier
+            .width(500.dp)
+            .height(256.dp)
+            .background(Color(0xFF181818), RoundedCornerShape(24.dp))
+            .padding(24.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text("Sales opportunity - Next 30 days", style = Typography.l1, color = Color.White.copy(alpha = 0.5f))
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(verticalAlignment = Alignment.Bottom) {
+                Text(amount, style = Typography.h0, color = Color.White)
+                Text(fraction, style = Typography.h1, color = Color.White)
+            }
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Box(
+                    modifier = Modifier
+                        .background(Color(0xFFE2ECD1), RoundedCornerShape(256.dp))
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                ) {
+                    Text(growth, color = Color(0xFF3A5A28), style = Typography.l1m)
+                }
+                Text("if all recommended actions applied", style = Typography.l1m, color = Color.White)
+            }
+        }
+    }
+}
+
+@Composable
+fun AtRiskCard(total: Int, tracked: Int, items: List<AtRiskItem>) {
+    Column(
+        modifier = Modifier
+            .size(256.dp)
+            .background(Color.White, RoundedCornerShape(24.dp))
+            .padding(24.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text("At risk items", style = Typography.l1, color = Color.Black.copy(alpha = 0.5f))
+            Row(verticalAlignment = Alignment.Bottom) {
+                Text("$total ", style = Typography.h0)
+                Text("of $tracked tracked", style = Typography.l2m, color = Color.Black.copy(alpha = 0.5f))
+            }
+        }
+
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            items.forEach { item ->
+                AtRiskRow(item.label, item.count, item.color, item.backgroundColor)
+            }
+        }
+    }
+}
+
+@Composable
+fun AtRiskRow(label: String, count: Int, color: Color, backgroundColor: Color) {
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+        StatusBadge(label, color, backgroundColor)
+        Text(count.toString(), style = Typography.l1m)
+    }
+}
+
+@Composable
+fun WasteCard(predictedWaste: String) {
+    Column(
+        modifier = Modifier
+            .size(256.dp)
+            .background(Color.White, RoundedCornerShape(24.dp))
+            .padding(24.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text("Predicted waste", style = Typography.l1, color = Color.Black.copy(alpha = 0.5f))
+            Text(predictedWaste, style = Typography.h0)
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(85.dp)
+                .background(Color(0xFFF9E5DC), RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp))
+        )
+    }
+}
+
+@Composable
+fun ActionCard(items: Int, amount: String, title: String, tag: String, color: Color, backgroundColor: Color) {
+    Column(
+        modifier = Modifier
+            .width(330.dp)
+            .height(184.dp)
+            .background(Color.White, RoundedCornerShape(24.dp))
+            .padding(24.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+            StatusBadge("$items items", color, backgroundColor)
+            Text(amount, style = Typography.l1m, color = Color.Black.copy(alpha = 0.5f))
+        }
+
+        Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+            Text(title, style = Typography.s1)
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Text(tag, style = Typography.l1m, color = Color(0xFF1C4EA3))
+                Icon(Icons.Default.ArrowForward, contentDescription = null, modifier = Modifier.size(20.dp), tint = Color(0xFF1C4EA3))
+            }
+        }
+    }
+}
+
+@Composable
+fun StatusBadge(text: String, color: Color, backgroundColor: Color) {
+    Box(
+        modifier = Modifier
+            .background(backgroundColor, RoundedCornerShape(256.dp))
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = text, color = color, style = Typography.l2m)
+    }
+}
+
+@Composable
+fun ForecastTable(rows: List<ForecastRowItem>) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, RoundedCornerShape(24.dp))
+            .clip(RoundedCornerShape(24.dp))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text("Forecast - June 2026", style = Typography.l1m)
+                Box(
+                    modifier = Modifier
+                        .background(Color.Black.copy(alpha = 0.1f), RoundedCornerShape(256.dp))
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                ) {
+                    Text("${rows.size} results", style = Typography.c1)
+                }
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                FilterDropdown("All branches")
+                FilterDropdown("All categories")
+                FilterDropdown("High, Critical")
+                Box(
+                    modifier = Modifier
+                        .border(1.dp, Color.Black.copy(alpha = 0.1f), RoundedCornerShape(256.dp))
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text("Reset", style = Typography.l1m)
+                        Icon(Icons.Default.FilterList, contentDescription = null, modifier = Modifier.size(20.dp))
+                    }
+                }
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Black.copy(alpha = 0.04f))
+                .padding(horizontal = 20.dp, vertical = 8.dp)
+        ) {
+            val columns = listOf("Branch", "Category", "Waste risk", "Level", "Sales opp", "AI cluster")
+            columns.forEachIndexed { index, name ->
+                Text(
+                    text = name,
+                    style = Typography.l2m,
+                    color = Color.Black.copy(alpha = 0.5f),
+                    modifier = Modifier.weight(if (index == 5) 0.8f else 1f)
+                )
+            }
+        }
+
+        rows.forEach { row ->
+            ForecastRow(
+                branch = row.branch,
+                category = row.category,
+                wasteRisk = row.wasteRisk,
+                level = row.level,
+                salesOpp = row.salesOpp,
+                aiCluster = row.aiCluster,
+                isCritical = row.isCritical
+            )
+        }
+    }
+}
+
+@Composable
+fun ForecastRow(
+    branch: String,
+    category: String,
+    wasteRisk: String,
+    level: String,
+    salesOpp: String,
+    aiCluster: String,
+    isCritical: Boolean = false
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(if (isCritical) Color(0x0DD42721) else Color.Transparent)
+            .padding(horizontal = 20.dp, vertical = 20.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(branch, style = Typography.l1, modifier = Modifier.weight(1f))
+        Text(category, style = Typography.l2m, modifier = Modifier.weight(1f))
+        Text(wasteRisk, style = Typography.l2m, modifier = Modifier.weight(1f))
+        Box(modifier = Modifier.weight(1f)) {
+            when (level) {
+                "Critical" -> StatusBadge("Critical", Color(0xFF92301B), Color(0xFFF9E5DC))
+                "High" -> StatusBadge("High", Color(0xFF7B550B), Color(0xFFFBECC8))
+                "Medium" -> StatusBadge("Medium", Color(0xFF1C4EA3), Color(0xFFE7F0FF))
+            }
+        }
+        Text(salesOpp, style = Typography.l2m, modifier = Modifier.weight(1f))
+        Row(modifier = Modifier.weight(0.8f), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(aiCluster, style = Typography.l2m)
+            Icon(Icons.Default.ChevronRight, contentDescription = null, modifier = Modifier.size(20.dp))
+        }
+    }
+}
+
+@Composable
+fun FilterDropdown(text: String) {
+    Row(
+        modifier = Modifier
+            .background(Color.White, RoundedCornerShape(256.dp))
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(text, style = Typography.l1m)
+        Icon(Icons.Default.ArrowDropDown, contentDescription = null, modifier = Modifier.size(20.dp))
+    }
+}

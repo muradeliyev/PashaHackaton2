@@ -8,7 +8,7 @@ class HomeScreen(private val viewModel: HomeViewModel) : Screen {
 
     @Composable
     override fun Content() {
-
+        HomePage(viewModel = viewModel)
     }
 
 }
