@@ -3,7 +3,7 @@ package app.pasha.hackaton.feature.forecast.presentation
 import androidx.compose.ui.graphics.Color
 
 data class ForecastState(
-    val userName: String = "Ravan A.",
+    val userName: String = "",
     val sidebarItems: List<String> = listOf("Dashboard", "Forecast", "Recommendations", "Applied actions", "Branch analysis"),
     val selectedSidebarIndex: Int = 1,
     val venues: List<String> = listOf("Sumgayit", "Xatai", "Bakikhanov"),

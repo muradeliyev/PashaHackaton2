@@ -8,7 +8,7 @@ import org.koin.core.module.dsl.viewModel
 
 
 val dashboardModule = module {
-    viewModel { DashboardViewModel(get(), get()) }
+    viewModel { DashboardViewModel(get(), get(), get()) }
 
     navigation<DashboardScreen> {
         it.Content()

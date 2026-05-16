@@ -7,7 +7,7 @@ import org.koin.dsl.navigation3.navigation
 import org.koin.core.module.dsl.viewModel
 
 val forecastModule = module {
-    viewModel { ForecastViewModel(get()) }
+    viewModel { ForecastViewModel(get(), get()) }
 
     navigation<ForecastScreen> {
         it.Content()

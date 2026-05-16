@@ -7,7 +7,7 @@ import org.koin.dsl.navigation3.navigation
 import org.koin.core.module.dsl.viewModel
 
 val branchAnalysisModule = module {
-    viewModel { BranchAnalysisViewModel(get()) }
+    viewModel { BranchAnalysisViewModel(get(), get()) }
     single { BranchAnalysisScreen() }
 
     navigation<BranchAnalysisScreen> {

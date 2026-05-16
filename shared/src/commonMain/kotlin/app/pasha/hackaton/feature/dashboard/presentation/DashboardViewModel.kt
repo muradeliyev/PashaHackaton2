@@ -8,6 +8,7 @@ import app.pasha.hackaton.core.mvi.statefulViewModel
 import app.pasha.hackaton.core.navigation.Navigator
 import app.pasha.hackaton.core.network.api.PashaApi
 import app.pasha.hackaton.core.network.model.PredictionRequest
+import app.pasha.hackaton.core.storage.UserRepository
 import app.pasha.hackaton.feature.forecast.presentation.ForecastScreen
 import app.pasha.hackaton.feature.recommendations.presentation.RecommendationsScreen
 import kotlinx.coroutines.async
@@ -17,7 +18,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 data class DashboardState(
-    val userName: String = "Ravan A.",
+    val userName: String = "",
     val sidebarItems: List<String> = listOf("Dashboard", "Forecast", "Recommendations", "Applied actions", "Branch analysis"),
     val selectedSidebarIndex: Int = 0,
     val opportunity: String = "48 250,",
@@ -50,11 +51,34 @@ data class ForecastRowItem(val branch: String, val category: String, val wasteRi
 
 class DashboardViewModel(
     private val navigator: Navigator,
-    private val pashaApi: PashaApi
+    private val pashaApi: PashaApi,
+    private val userRepository: UserRepository,
 ) : ViewModel(), Stateful<DashboardState> by statefulViewModel(DashboardState()), KoinComponent {
 
     init {
+        observeUser()
         loadData()
+    }
+
+    private fun observeUser() {
+        viewModelScope.launch {
+            userRepository.userName.collect { name ->
+                updateState { it.copy(userName = name) }
+            }
+        }
+    }
+
+    fun onSidebarItemClick(index: Int) {
+        if (index == 1) {
+            val forecastScreen: ForecastScreen by inject()
+            navigator.navigateTo(forecastScreen)
+        } else {
+            updateState { it.copy(selectedSidebarIndex = index) }
+        }
+    }
+
+    fun logout() {
+        navigator.back()
     }
 
     private fun loadData() {
@@ -63,7 +87,7 @@ class DashboardViewModel(
             
             val userInfoResult = pashaApi.getUserInfo()
             userInfoResult.onSuccess { info ->
-                updateState { it.copy(userName = info.username) }
+                userRepository.updateUserName(info.username)
             }
 
             // Mocking some data for now but using the API logic

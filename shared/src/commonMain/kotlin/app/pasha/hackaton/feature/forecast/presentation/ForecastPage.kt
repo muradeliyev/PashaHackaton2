@@ -27,7 +27,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.pasha.hackaton.ui.kit.Typography
-import app.pasha.hackaton.ui.kit.component.Sidebar
 import app.pasha.hackaton.ui.kit.component.TopBar
 
 @Composable
@@ -47,27 +46,27 @@ fun ForecastPage(viewModel: ForecastViewModel) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-                VenueSelector("Venue")
-                VenueSelector(state.selectedVenue)
-            }
-
-            Spacer(Modifier.size(24.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                state.cards.forEach { card ->
-                    ForecastCard(card)
-                }
-            }
-
-            Spacer(Modifier.size(20.dp))
-
-            ChartSection()
-
-            Spacer(Modifier.size(48.dp))
+            VenueSelector("Venue")
+            VenueSelector(state.selectedVenue)
         }
+
+        Spacer(Modifier.size(24.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            state.cards.forEach { card ->
+                ForecastCard(card)
+            }
+        }
+
+        Spacer(Modifier.size(20.dp))
+
+        ChartSection()
+
+        Spacer(Modifier.size(48.dp))
+    }
 }
 
 @Composable

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -52,53 +53,53 @@ fun DashboardPage(viewModel: DashboardViewModel) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-                OpportunityCard(
-                    amount = state.opportunity,
-                    fraction = state.opportunityFraction,
-                    growth = state.opportunityGrowth
-                )
-                AtRiskCard(
-                    total = state.atRiskTotal,
-                    tracked = state.atRiskTracked,
-                    items = state.atRiskItems
-                )
-                WasteCard(predictedWaste = state.predictedWaste)
-            }
-
-            Spacer(Modifier.size(40.dp))
-
-            // Divider
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(Color.Black.copy(alpha = 0.1f))
+            OpportunityCard(
+                amount = state.opportunity,
+                fraction = state.opportunityFraction,
+                growth = state.opportunityGrowth
             )
-
-            Spacer(Modifier.size(40.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                state.actionCards.forEach { card ->
-                    ActionCard(
-                        items = card.items,
-                        amount = card.amount,
-                        title = card.title,
-                        tag = card.tag,
-                        color = card.color,
-                        backgroundColor = card.backgroundColor
-                    )
-                }
-            }
-
-            Spacer(Modifier.size(20.dp))
-
-            ForecastTable(rows = state.forecastRows)
-
-            Spacer(Modifier.size(48.dp))
+            AtRiskCard(
+                total = state.atRiskTotal,
+                tracked = state.atRiskTracked,
+                items = state.atRiskItems
+            )
+            WasteCard(predictedWaste = state.predictedWaste)
         }
+
+        Spacer(Modifier.size(40.dp))
+
+        // Divider
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(Color.Black.copy(alpha = 0.1f))
+        )
+
+        Spacer(Modifier.size(40.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            state.actionCards.forEach { card ->
+                ActionCard(
+                    items = card.items,
+                    amount = card.amount,
+                    title = card.title,
+                    tag = card.tag,
+                    color = card.color,
+                    backgroundColor = card.backgroundColor
+                )
+            }
+        }
+
+        Spacer(Modifier.size(20.dp))
+
+        ForecastTable(rows = state.forecastRows)
+
+        Spacer(Modifier.size(48.dp))
+    }
 }
 
 @Composable

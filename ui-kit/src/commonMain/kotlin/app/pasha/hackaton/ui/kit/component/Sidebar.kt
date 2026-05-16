@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import app.pasha.hackaton.ui.kit.Typography
@@ -52,7 +54,8 @@ fun SidebarItem(title: String, isSelected: Boolean, onClick: () -> Unit) {
         color = if (isSelected) Color.Black else Color.Black.copy(alpha = 0.4f),
         modifier = Modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
             .clickable { onClick() }
-            .padding(vertical = 10.dp)
+            .padding(8.dp)
     )
 }

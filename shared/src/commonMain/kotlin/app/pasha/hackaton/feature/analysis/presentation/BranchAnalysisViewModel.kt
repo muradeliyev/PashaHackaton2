@@ -2,13 +2,16 @@ package app.pasha.hackaton.feature.analysis.presentation
 
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import app.pasha.hackaton.core.mvi.Stateful
 import app.pasha.hackaton.core.mvi.statefulViewModel
 import app.pasha.hackaton.core.navigation.Navigator
+import app.pasha.hackaton.core.storage.UserRepository
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
 data class BranchAnalysisState(
-    val userName: String = "Ravan A.",
+    val userName: String = "",
     val selectedPeriod: String = "Q2 - 2026",
     val riskyBranches: List<BranchMetricItem> = listOf(
         BranchMetricItem("Sumgayit", 0.57f, "5.7%", Color(0xFFC4441F), Color(0xFFE5A592)),
@@ -34,6 +37,18 @@ data class BranchMetricItem(
 
 class BranchAnalysisViewModel(
     private val navigator: Navigator,
+    private val userRepository: UserRepository
 ) : ViewModel(), Stateful<BranchAnalysisState> by statefulViewModel(BranchAnalysisState()), KoinComponent {
 
+    init {
+        observeUser()
+    }
+
+    private fun observeUser() {
+        viewModelScope.launch {
+            userRepository.userName.collect { name ->
+                updateState { it.copy(userName = name) }
+            }
+        }
+    }
 }

@@ -1,12 +1,17 @@
 package app.pasha.hackaton
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation3.ui.NavDisplay
 import app.pasha.hackaton.core.error.ErrorReporter
@@ -19,6 +24,7 @@ import app.pasha.hackaton.feature.actions.presentation.AppliedActionsScreen
 import app.pasha.hackaton.feature.analysis.presentation.BranchAnalysisScreen
 import app.pasha.hackaton.ui.kit.component.Sidebar
 import app.pasha.hackaton.ui.kit.component.ErrorDialog
+import org.koin.compose.getKoin
 import org.koin.compose.koinInject
 import org.koin.compose.navigation3.koinEntryProvider
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -27,20 +33,15 @@ import org.koin.core.annotation.KoinExperimentalAPI
 @Composable
 @Preview
 fun App() {
+    val koin = getKoin()
     val navigator = koinInject<Navigator>()
     val errorReporter = koinInject<ErrorReporter>()
-    val loginScreen = koinInject<LoginScreen>()
-    val dashboardScreen = koinInject<DashboardScreen>()
-    val forecastScreen = koinInject<ForecastScreen>()
-    val recommendationsScreen = koinInject<RecommendationsScreen>()
-    val appliedActionsScreen = koinInject<AppliedActionsScreen>()
-    val branchAnalysisScreen = koinInject<BranchAnalysisScreen>()
 
     val globalError by errorReporter.errorState
 
     LaunchedEffect(Unit) {
         if (navigator.backStack.isEmpty()) {
-            navigator.navigateTo(loginScreen)
+            navigator.navigateTo(koin.get<LoginScreen>())
         }
     }
 
@@ -49,7 +50,11 @@ fun App() {
             val currentScreen = navigator.backStack.last()
             val isSidebarVisible = currentScreen !is LoginScreen
             
-            Row(modifier = Modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(if (isSidebarVisible) Color(0xFFF7F6F6) else Color.White)
+            ) {
                 if (isSidebarVisible) {
                     val sidebarItems = listOf("Dashboard", "Forecast", "Recommendations", "Applied actions", "Branch analysis")
                     val selectedIndex = when (currentScreen) {
@@ -66,16 +71,16 @@ fun App() {
                         selectedIndex = selectedIndex,
                         onItemClick = { index ->
                             when (index) {
-                                0 -> navigator.navigateTo(dashboardScreen)
-                                1 -> navigator.navigateTo(forecastScreen)
-                                2 -> navigator.navigateTo(recommendationsScreen)
-                                3 -> navigator.navigateTo(appliedActionsScreen)
-                                4 -> navigator.navigateTo(branchAnalysisScreen)
+                                0 -> navigator.navigateTo(koin.get<DashboardScreen>())
+                                1 -> navigator.navigateTo(koin.get<ForecastScreen>())
+                                2 -> navigator.navigateTo(koin.get<RecommendationsScreen>())
+                                3 -> navigator.navigateTo(koin.get<AppliedActionsScreen>())
+                                4 -> navigator.navigateTo(koin.get<BranchAnalysisScreen>())
                             }
                         },
                         onLogout = {
                             navigator.backStack.clear()
-                            navigator.navigateTo(loginScreen)
+                            navigator.navigateTo(koin.get<LoginScreen>())
                         }
                     )
                 }
@@ -84,7 +89,7 @@ fun App() {
                     navigator.backStack,
                     onBack = navigator::back,
                     entryProvider = koinEntryProvider(),
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f).fillMaxHeight()
                 )
             }
         }

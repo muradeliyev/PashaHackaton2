@@ -4,6 +4,7 @@ import app.pasha.hackaton.core.di.coreDiModule
 import app.pasha.hackaton.core.di.platformCoreModule
 import app.pasha.hackaton.core.navigation.Navigator
 import app.pasha.hackaton.core.navigation.impl.NavigatorImpl
+import app.pasha.hackaton.core.storage.UserRepository
 import app.pasha.hackaton.feature.forecast.di.forecastModule
 import app.pasha.hackaton.feature.forecast.presentation.ForecastScreen
 import app.pasha.hackaton.feature.dashboard.di.dashboardModule
@@ -25,6 +26,7 @@ import org.koin.dsl.bind
 
 val coreModule = module {
     single { NavigatorImpl() }.bind(Navigator::class)
+    single { UserRepository() }
     factory { LoginScreen(get()) }
     factory { DashboardScreen(get()) }
     factory { ForecastScreen(get()) }

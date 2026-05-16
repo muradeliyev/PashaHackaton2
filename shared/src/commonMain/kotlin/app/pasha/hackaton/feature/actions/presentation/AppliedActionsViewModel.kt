@@ -1,13 +1,16 @@
 package app.pasha.hackaton.feature.actions.presentation
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import app.pasha.hackaton.core.mvi.Stateful
 import app.pasha.hackaton.core.mvi.statefulViewModel
 import app.pasha.hackaton.core.navigation.Navigator
+import app.pasha.hackaton.core.storage.UserRepository
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
 data class AppliedActionsState(
-    val userName: String = "Ravan A.",
+    val userName: String = "",
     val summaryCards: List<SummaryCardItem> = listOf(
         SummaryCardItem("Active", "8"),
         SummaryCardItem("Applied - Last 14 days", "14"),
@@ -36,6 +39,18 @@ data class ActionRowItem(val branch: String, val category: String, val action: S
 
 class AppliedActionsViewModel(
     private val navigator: Navigator,
+    private val userRepository: UserRepository
 ) : ViewModel(), Stateful<AppliedActionsState> by statefulViewModel(AppliedActionsState()), KoinComponent {
 
+    init {
+        observeUser()
+    }
+
+    private fun observeUser() {
+        viewModelScope.launch {
+            userRepository.userName.collect { name ->
+                updateState { it.copy(userName = name) }
+            }
+        }
+    }
 }

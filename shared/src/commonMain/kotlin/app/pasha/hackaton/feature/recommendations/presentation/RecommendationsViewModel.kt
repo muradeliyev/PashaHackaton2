@@ -2,17 +2,20 @@ package app.pasha.hackaton.feature.recommendations.presentation
 
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import app.pasha.hackaton.core.error.ErrorReporter
 import app.pasha.hackaton.core.mvi.Stateful
 import app.pasha.hackaton.core.mvi.statefulViewModel
 import app.pasha.hackaton.core.navigation.Navigator
+import app.pasha.hackaton.core.storage.UserRepository
 import app.pasha.hackaton.feature.forecast.presentation.ForecastScreen
 import app.pasha.hackaton.feature.dashboard.presentation.DashboardScreen
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 data class RecommendationState(
-    val userName: String = "Ravan A.",
+    val userName: String = "",
     val sidebarItems: List<String> = listOf("Dashboard", "Forecast", "Recommendations", "Applied actions", "Branch analysis"),
     val selectedSidebarIndex: Int = 2,
     val totalImpactSales: String = "+ 32 150,",
@@ -74,11 +77,24 @@ data class RecommendationItem(
 
 class RecommendationsViewModel(
     private val navigator: Navigator,
-    private val errorReporter: ErrorReporter
+    private val errorReporter: ErrorReporter,
+    private val userRepository: UserRepository
 ) : ViewModel(), Stateful<RecommendationState> by statefulViewModel(RecommendationState()), KoinComponent {
 
     private val dashboardScreen: DashboardScreen by inject()
     private val forecastScreen: ForecastScreen by inject()
+
+    init {
+        observeUser()
+    }
+
+    private fun observeUser() {
+        viewModelScope.launch {
+            userRepository.userName.collect { name ->
+                updateState { it.copy(userName = name) }
+            }
+        }
+    }
 
     fun onSidebarItemClick(index: Int) {
         when (index) {

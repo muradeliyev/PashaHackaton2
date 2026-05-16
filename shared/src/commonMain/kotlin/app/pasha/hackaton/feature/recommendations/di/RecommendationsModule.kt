@@ -7,7 +7,7 @@ import org.koin.dsl.navigation3.navigation
 import org.koin.core.module.dsl.viewModel
 
 val recommendationsModule = module {
-    viewModel { RecommendationsViewModel(get(), get()) }
+    viewModel { RecommendationsViewModel(get(), get(), get()) }
     single { RecommendationsScreen() }
 
     navigation<RecommendationsScreen> {
