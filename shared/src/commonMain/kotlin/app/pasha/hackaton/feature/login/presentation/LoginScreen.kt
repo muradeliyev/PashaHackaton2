@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -14,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -48,6 +50,7 @@ class LoginScreen(private val viewModel: LoginViewModel) : Screen {
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
+            // ... (rest of the content)
             Row(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
@@ -99,7 +102,7 @@ class LoginScreen(private val viewModel: LoginViewModel) : Screen {
                             )
                         }
                     },
-                    visualTransformation = if(isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
                 )
 
@@ -107,10 +110,14 @@ class LoginScreen(private val viewModel: LoginViewModel) : Screen {
 
                 MainButton(
                     onClick = { viewModel.onIntent(LoginIntent.Login) },
-                    content = {
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    if (state.isLoading) {
+                        CircularProgressIndicator()
+                    } else {
                         Text("Login")
                     }
-                )
+                }
             }
         }
     }

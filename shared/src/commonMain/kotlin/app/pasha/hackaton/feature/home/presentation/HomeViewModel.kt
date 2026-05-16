@@ -6,6 +6,7 @@ import app.pasha.hackaton.core.mvi.Stateful
 import app.pasha.hackaton.core.mvi.statefulViewModel
 import app.pasha.hackaton.core.navigation.Navigator
 import app.pasha.hackaton.feature.forecast.presentation.ForecastScreen
+import app.pasha.hackaton.feature.recommendations.presentation.RecommendationsScreen
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -46,14 +47,7 @@ class HomeViewModel(
 ) : ViewModel(), Stateful<HomeState> by statefulViewModel(HomeState()), KoinComponent {
 
     private val forecastScreen: ForecastScreen by inject()
-
-    fun onSidebarItemClick(index: Int) {
-        if (index == 1) {
-            navigator.navigateTo(forecastScreen)
-        } else {
-            updateState { it.copy(selectedSidebarIndex = index) }
-        }
-    }
+    private val recommendationsScreen: RecommendationsScreen by inject()
 
     fun logout() {
         navigator.back()

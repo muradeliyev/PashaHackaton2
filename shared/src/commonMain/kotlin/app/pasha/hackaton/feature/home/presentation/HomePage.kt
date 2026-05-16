@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,31 +40,19 @@ import app.pasha.hackaton.ui.kit.component.TopBar
 fun HomePage(viewModel: HomeViewModel) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF7F6F6))
+            .padding(horizontal = 56.dp)
+            .verticalScroll(rememberScrollState())
     ) {
-        Sidebar(
-            items = state.sidebarItems,
-            selectedIndex = state.selectedSidebarIndex,
-            onItemClick = viewModel::onSidebarItemClick,
-            onLogout = viewModel::logout
-        )
+        TopBar(userName = state.userName)
 
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .padding(horizontal = 56.dp)
-                .verticalScroll(rememberScrollState())
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            TopBar(userName = state.userName)
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
                 OpportunityCard(
                     amount = state.opportunity,
                     fraction = state.opportunityFraction,
@@ -113,7 +100,6 @@ fun HomePage(viewModel: HomeViewModel) {
 
             Spacer(Modifier.size(48.dp))
         }
-    }
 }
 
 @Composable

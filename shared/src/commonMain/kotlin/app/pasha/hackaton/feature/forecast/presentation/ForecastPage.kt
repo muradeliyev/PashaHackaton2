@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,31 +34,19 @@ import app.pasha.hackaton.ui.kit.component.TopBar
 fun ForecastPage(viewModel: ForecastViewModel) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF7F6F6))
+            .padding(horizontal = 56.dp)
+            .verticalScroll(rememberScrollState())
     ) {
-        Sidebar(
-            items = state.sidebarItems,
-            selectedIndex = state.selectedSidebarIndex,
-            onItemClick = { viewModel.onIntent(ForecastIntent.SelectSidebarItem(it)) },
-            onLogout = { viewModel.onIntent(ForecastIntent.Logout) }
-        )
+        TopBar(userName = state.userName)
 
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight()
-                .padding(horizontal = 56.dp)
-                .verticalScroll(rememberScrollState())
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            TopBar(userName = state.userName)
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
                 VenueSelector("Venue")
                 VenueSelector(state.selectedVenue)
             }
@@ -81,7 +68,6 @@ fun ForecastPage(viewModel: ForecastViewModel) {
 
             Spacer(Modifier.size(48.dp))
         }
-    }
 }
 
 @Composable

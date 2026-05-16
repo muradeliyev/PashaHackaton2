@@ -4,10 +4,10 @@ import app.pasha.hackaton.feature.forecast.presentation.ForecastScreen
 import app.pasha.hackaton.feature.forecast.presentation.ForecastViewModel
 import org.koin.dsl.module
 import org.koin.dsl.navigation3.navigation
-import org.koin.plugin.module.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 
 val forecastModule = module {
-    viewModel<ForecastViewModel>()
+    viewModel { ForecastViewModel(get()) }
 
     navigation<ForecastScreen> {
         it.Content()
