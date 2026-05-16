@@ -53,6 +53,7 @@ class LoginViewModel(
                 )
 
                 if (result.isSuccess) {
+                    navigator.backStack.clear()
                     navigator.navigateTo(dashboardScreen)
                 } else {
                     val message = result.exceptionOrNull()?.message ?: "Unknown error occurred"

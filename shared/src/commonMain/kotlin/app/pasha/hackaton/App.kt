@@ -10,12 +10,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation3.ui.NavDisplay
 import app.pasha.hackaton.core.error.ErrorReporter
 import app.pasha.hackaton.core.navigation.Navigator
+import app.pasha.hackaton.core.storage.AppStorage
 import app.pasha.hackaton.feature.forecast.presentation.ForecastScreen
 import app.pasha.hackaton.feature.dashboard.presentation.DashboardScreen
 import app.pasha.hackaton.feature.login.presentation.LoginScreen
@@ -29,6 +31,8 @@ import org.koin.compose.getKoin
 import org.koin.compose.koinInject
 import org.koin.compose.navigation3.koinEntryProvider
 import org.koin.core.annotation.KoinExperimentalAPI
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import pashahackaton2.shared.generated.resources.Res
 import pashahackaton2.shared.generated.resources.brand
 
@@ -39,12 +43,21 @@ fun App() {
     val koin = getKoin()
     val navigator = koinInject<Navigator>()
     val errorReporter = koinInject<ErrorReporter>()
+    val appStorage = koinInject<AppStorage>()
+    val coroutineScope = rememberCoroutineScope()
 
     val globalError by errorReporter.errorState
 
     LaunchedEffect(Unit) {
         if (navigator.backStack.isEmpty()) {
-            navigator.navigateTo(koin.get<LoginScreen>())
+            val accessToken = appStorage.getAccessToken().first()
+            val startScreen = if (accessToken.isNullOrBlank()) {
+                koin.get<LoginScreen>()
+            } else {
+                koin.get<DashboardScreen>()
+            }
+
+            navigator.navigateTo(startScreen)
         }
     }
 
@@ -82,8 +95,11 @@ fun App() {
                             }
                         },
                         onLogout = {
-                            navigator.backStack.clear()
-                            navigator.navigateTo(koin.get<LoginScreen>())
+                            coroutineScope.launch {
+                                appStorage.clearAccessToken()
+                                navigator.backStack.clear()
+                                navigator.navigateTo(koin.get<LoginScreen>())
+                            }
                         },
                         painter = painterResource(Res.drawable.brand),
                     )
