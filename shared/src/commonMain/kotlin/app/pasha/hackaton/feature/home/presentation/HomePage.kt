@@ -2,7 +2,6 @@ package app.pasha.hackaton.feature.home.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -24,8 +22,6 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,7 +33,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.pasha.hackaton.ui.kit.Typography
-import app.pasha.hackaton.ui.kit.component.SecondaryButton
+import app.pasha.hackaton.ui.kit.component.Sidebar
+import app.pasha.hackaton.ui.kit.component.StatusBadge
+import app.pasha.hackaton.ui.kit.component.TopBar
 
 @Composable
 fun HomePage(viewModel: HomeViewModel) {
@@ -114,106 +112,6 @@ fun HomePage(viewModel: HomeViewModel) {
             ForecastTable(rows = state.forecastRows)
 
             Spacer(Modifier.size(48.dp))
-        }
-    }
-}
-
-@Composable
-fun Sidebar(
-    items: List<String>,
-    selectedIndex: Int,
-    onItemClick: (Int) -> Unit,
-    onLogout: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .width(256.dp)
-            .fillMaxHeight()
-            .padding(vertical = 48.dp, horizontal = 24.dp),
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            items.forEachIndexed { index, title ->
-                SidebarItem(
-                    title = title,
-                    isSelected = index == selectedIndex,
-                    onClick = { onItemClick(index) }
-                )
-            }
-        }
-
-        SecondaryButton(onClick = onLogout) {
-            Text("Log out", style = Typography.l1)
-        }
-    }
-}
-
-@Composable
-fun SidebarItem(title: String, isSelected: Boolean, onClick: () -> Unit) {
-    Text(
-        text = title,
-        style = if (isSelected) Typography.h4 else Typography.s1,
-        color = if (isSelected) Color.Black else Color.Black.copy(alpha = 0.4f),
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(vertical = 10.dp)
-    )
-}
-
-@Composable
-fun TopBar(userName: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 48.dp, bottom = 40.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .size(56.dp)
-                .background(Color.White, CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(Icons.Default.Menu, contentDescription = null)
-        }
-
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .height(56.dp)
-                .background(Color.White, RoundedCornerShape(28.dp))
-                .padding(horizontal = 20.dp),
-            contentAlignment = Alignment.CenterStart
-        ) {
-            Text("Search", style = Typography.l1, color = Color.Black.copy(alpha = 0.5f))
-        }
-
-        Box(
-            modifier = Modifier
-                .size(56.dp)
-                .background(Color.White, CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(Icons.Default.Notifications, contentDescription = null)
-        }
-
-        Box(
-            modifier = Modifier
-                .width(1.dp)
-                .height(43.dp)
-                .background(Color.Black.copy(alpha = 0.1f))
-        )
-
-        Box(
-            modifier = Modifier
-                .height(56.dp)
-                .background(Color.White, RoundedCornerShape(28.dp))
-                .padding(horizontal = 20.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(userName, style = Typography.l1)
         }
     }
 }
@@ -325,18 +223,6 @@ fun ActionCard(items: Int, amount: String, title: String, tag: String, color: Co
                 Icon(Icons.Default.ArrowForward, contentDescription = null, modifier = Modifier.size(20.dp), tint = Color(0xFF1C4EA3))
             }
         }
-    }
-}
-
-@Composable
-fun StatusBadge(text: String, color: Color, backgroundColor: Color) {
-    Box(
-        modifier = Modifier
-            .background(backgroundColor, RoundedCornerShape(256.dp))
-            .padding(horizontal = 8.dp, vertical = 4.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = text, color = color, style = Typography.l2m)
     }
 }
 

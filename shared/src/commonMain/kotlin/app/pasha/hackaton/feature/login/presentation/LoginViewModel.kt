@@ -7,11 +7,14 @@ import app.pasha.hackaton.core.mvi.statefulViewModel
 import app.pasha.hackaton.core.navigation.Navigator
 import app.pasha.hackaton.feature.home.presentation.HomeScreen
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class LoginViewModel(
     private val navigator: Navigator,
-    private val homeScreen: HomeScreen,
-) : ViewModel(), Stateful<LoginState> by statefulViewModel(LoginState()) {
+) : ViewModel(), Stateful<LoginState> by statefulViewModel(LoginState()), KoinComponent {
+
+    private val homeScreen: HomeScreen by inject()
 
     fun onIntent(intent: LoginIntent) {
         when (intent) {

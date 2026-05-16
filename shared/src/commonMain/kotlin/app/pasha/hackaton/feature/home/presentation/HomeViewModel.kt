@@ -5,6 +5,9 @@ import androidx.lifecycle.ViewModel
 import app.pasha.hackaton.core.mvi.Stateful
 import app.pasha.hackaton.core.mvi.statefulViewModel
 import app.pasha.hackaton.core.navigation.Navigator
+import app.pasha.hackaton.feature.forecast.presentation.ForecastScreen
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 data class HomeState(
     val userName: String = "Ravan A.",
@@ -40,10 +43,16 @@ data class ForecastRowItem(val branch: String, val category: String, val wasteRi
 
 class HomeViewModel(
     private val navigator: Navigator,
-) : ViewModel(), Stateful<HomeState> by statefulViewModel(HomeState()) {
+) : ViewModel(), Stateful<HomeState> by statefulViewModel(HomeState()), KoinComponent {
+
+    private val forecastScreen: ForecastScreen by inject()
 
     fun onSidebarItemClick(index: Int) {
-        updateState { it.copy(selectedSidebarIndex = index) }
+        if (index == 1) {
+            navigator.navigateTo(forecastScreen)
+        } else {
+            updateState { it.copy(selectedSidebarIndex = index) }
+        }
     }
 
     fun logout() {

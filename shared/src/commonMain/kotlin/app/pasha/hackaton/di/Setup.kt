@@ -2,6 +2,8 @@ package app.pasha.hackaton.di
 
 import app.pasha.hackaton.core.navigation.Navigator
 import app.pasha.hackaton.core.navigation.impl.NavigatorImpl
+import app.pasha.hackaton.feature.forecast.di.forecastModule
+import app.pasha.hackaton.feature.forecast.presentation.ForecastScreen
 import app.pasha.hackaton.feature.home.di.homeModule
 import app.pasha.hackaton.feature.home.presentation.HomeScreen
 import app.pasha.hackaton.feature.login.di.loginModule
@@ -18,6 +20,7 @@ val coreModule = module {
     single<NavigatorImpl>().bind(Navigator::class)
     factory<LoginScreen>()
     factory<HomeScreen>()
+    factory<ForecastScreen>()
 }
 
 fun setupKoin() {
@@ -28,6 +31,7 @@ fun setupKoin() {
             coreModule,
             homeModule,
             loginModule,
+            forecastModule,
         )
     }
 }
