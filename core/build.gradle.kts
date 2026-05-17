@@ -9,6 +9,10 @@ plugins {
 
 kotlin {
     jvm()
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+    }
 
     sourceSets {
         commonMain {
@@ -37,6 +41,12 @@ kotlin {
                 implementation(libs.ktor.client.auth)
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.ktor.serialization.kotlinx.json)
+            }
+        }
+        val wasmJsMain by getting {
+            dependencies {
+                implementation(libs.ktor.client.core) // Or specific engine if needed, but core usually enough for wasm
+                implementation("androidx.datastore:datastore-core-okio-wasm-js:1.3.0-alpha09")
             }
         }
     }
