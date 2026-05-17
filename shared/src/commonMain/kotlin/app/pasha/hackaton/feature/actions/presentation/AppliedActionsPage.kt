@@ -110,13 +110,13 @@ private fun ActionsTableShimmer() {
                     .padding(20.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                repeat(6) { index ->
+                repeat(7) { index ->
                     ShimmerBox(
                         modifier = Modifier
                             .weight(1f)
                             .height(18.dp)
                     )
-                    if (index != 5) {
+                    if (index != 6) {
                         Spacer(Modifier.width(20.dp))
                     }
                 }
@@ -154,7 +154,7 @@ fun ActionsTable(rows: List<ActionRowItem>) {
                 .padding(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val headers = listOf("Branch", "Category", "Action", "Applied by", "Date", "Status")
+            val headers = listOf("Branch", "Family", "Action type", "Applied by", "Applied at", "Note", "Status")
             headers.forEach { header ->
                 Text(
                     text = header,
@@ -174,10 +174,11 @@ fun ActionsTable(rows: List<ActionRowItem>) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(row.branch, style = Typography.l1, modifier = Modifier.weight(1f))
-                Text(row.category, style = Typography.l1m, modifier = Modifier.weight(1f))
-                Text(row.action, style = Typography.l1m, modifier = Modifier.weight(1f))
+                Text(row.family, style = Typography.l1m, modifier = Modifier.weight(1f))
+                Text(row.actionType, style = Typography.l1m, modifier = Modifier.weight(1f))
                 Text(row.appliedBy, style = Typography.l1m, modifier = Modifier.weight(1f))
-                Text(row.date, style = Typography.l1m, modifier = Modifier.weight(1f))
+                Text(row.appliedAt, style = Typography.l1m, modifier = Modifier.weight(1f))
+                Text(row.note, style = Typography.l1m, modifier = Modifier.weight(1f))
                 Text(row.status, style = Typography.l1m, modifier = Modifier.weight(1f))
             }
         }
