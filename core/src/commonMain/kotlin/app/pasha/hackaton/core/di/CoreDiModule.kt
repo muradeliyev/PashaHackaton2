@@ -17,14 +17,16 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 
-private const val BASE_URL = "https://multimedia-compile-drums-addition.trycloudflare.com/"
+private const val BASE_URL = "https://replica-thinkpad-juan-bent.trycloudflare.com/"
 
 
 val coreDiModule = module {
-    single {
+    single<HttpClient> {
         val appStorage = get<AppStorage>()
         HttpClient {
             install(ContentNegotiation) {
@@ -53,7 +55,7 @@ val coreDiModule = module {
         }
     }
 
-    single<PashaApi> { PashaApiImpl(get()) }
-    single<AppStorage> { AppStorageImpl(get()) }
-    single<ErrorReporter> { ErrorReporterImpl() }
+    singleOf(::PashaApiImpl) { bind<PashaApi>() }
+    singleOf(::AppStorageImpl) { bind<AppStorage>() }
+    singleOf(::ErrorReporterImpl) { bind<ErrorReporter>() }
 }

@@ -9,6 +9,8 @@ import app.pasha.hackaton.feature.forecast.di.forecastModule
 import app.pasha.hackaton.feature.forecast.presentation.ForecastScreen
 import app.pasha.hackaton.feature.dashboard.di.dashboardModule
 import app.pasha.hackaton.feature.dashboard.presentation.DashboardScreen
+import app.pasha.hackaton.feature.operations.di.operationsModule
+import app.pasha.hackaton.feature.operations.presentation.OperationsScreen
 import app.pasha.hackaton.feature.login.di.loginModule
 import app.pasha.hackaton.feature.login.presentation.LoginScreen
 import app.pasha.hackaton.feature.recommendations.di.recommendationsModule
@@ -29,6 +31,7 @@ val coreModule = module {
     single { UserRepository() }
     factory { LoginScreen(get()) }
     factory { DashboardScreen(get()) }
+    factory { OperationsScreen(get()) }
     factory { ForecastScreen(get()) }
     factory { RecommendationsScreen() }
     factory { AppliedActionsScreen() }
@@ -45,6 +48,7 @@ fun setupKoin() {
             domainModule,
             coreModule,
             dashboardModule,
+            operationsModule,
             loginModule,
             forecastModule,
             recommendationsModule,

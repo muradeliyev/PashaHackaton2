@@ -20,6 +20,7 @@ import app.pasha.hackaton.core.navigation.Navigator
 import app.pasha.hackaton.core.storage.AppStorage
 import app.pasha.hackaton.feature.forecast.presentation.ForecastScreen
 import app.pasha.hackaton.feature.dashboard.presentation.DashboardScreen
+import app.pasha.hackaton.feature.operations.presentation.OperationsScreen
 import app.pasha.hackaton.feature.login.presentation.LoginScreen
 import app.pasha.hackaton.feature.recommendations.presentation.RecommendationsScreen
 import app.pasha.hackaton.feature.actions.presentation.AppliedActionsScreen
@@ -72,13 +73,14 @@ fun App() {
 //                    .background(if (isSidebarVisible) Color(0xFFF7F6F6) else Color.White)
             ) {
                 if (isSidebarVisible) {
-                    val sidebarItems = listOf("Dashboard", "Forecast", "Recommendations", "Applied actions", "Branch analysis")
+                    val sidebarItems = listOf("Dashboard", "Operations", "Forecast", "Recommendations", "Applied actions", "Branch analysis")
                     val selectedIndex = when (currentScreen) {
                         is DashboardScreen -> 0
-                        is ForecastScreen -> 1
-                        is RecommendationsScreen -> 2
-                        is AppliedActionsScreen -> 3
-                        is BranchAnalysisScreen -> 4
+                        is OperationsScreen -> 1
+                        is ForecastScreen -> 2
+                        is RecommendationsScreen -> 3
+                        is AppliedActionsScreen -> 4
+                        is BranchAnalysisScreen -> 5
                         else -> -1
                     }
 
@@ -88,10 +90,11 @@ fun App() {
                         onItemClick = { index ->
                             when (index) {
                                 0 -> navigator.navigateTo(koin.get<DashboardScreen>())
-                                1 -> navigator.navigateTo(koin.get<ForecastScreen>())
-                                2 -> navigator.navigateTo(koin.get<RecommendationsScreen>())
-                                3 -> navigator.navigateTo(koin.get<AppliedActionsScreen>())
-                                4 -> navigator.navigateTo(koin.get<BranchAnalysisScreen>())
+                                1 -> navigator.navigateTo(koin.get<OperationsScreen>())
+                                2 -> navigator.navigateTo(koin.get<ForecastScreen>())
+                                3 -> navigator.navigateTo(koin.get<RecommendationsScreen>())
+                                4 -> navigator.navigateTo(koin.get<AppliedActionsScreen>())
+                                5 -> navigator.navigateTo(koin.get<BranchAnalysisScreen>())
                             }
                         },
                         onLogout = {
