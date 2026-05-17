@@ -10,7 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.pasha.hackaton.ui.kit.Typography
@@ -181,20 +183,12 @@ fun MetricRow(item: BranchMetricItem) {
                     .padding(horizontal = 10.dp),
                 contentAlignment = Alignment.CenterEnd
             ) {
-                if (item.primaryColor != Color(0xFF2970DB) || item.progress > 0.5f) {
-                     Text(item.valueLabel, style = Typography.l1m, color = Color.White)
-                }
-            }
-            
-            if (item.primaryColor == Color(0xFF2970DB) && item.progress <= 0.5f) {
                 Box(
                     modifier = Modifier.fillMaxSize().padding(horizontal = 10.dp),
                     contentAlignment = Alignment.CenterEnd
                 ) {
-                    Text(item.valueLabel, style = Typography.l1m, color = Color(0xFF717171))
+                    Text(item.valueLabel, style = Typography.l1m, color = Color.Black)
                 }
-            } else if (item.primaryColor != Color(0xFF2970DB) && item.progress <= 0.1f) {
-                 // Fallback for very small progress where white text might not fit
             }
         }
     }
