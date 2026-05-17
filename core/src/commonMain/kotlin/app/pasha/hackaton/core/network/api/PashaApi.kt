@@ -15,5 +15,5 @@ interface PashaApi {
     suspend fun getUserInfo(): Result<UserInfoResponse>
     suspend fun predict(request: PredictionRequest): Result<PredictionResponse>
     suspend fun forecast(request: ForecastRequest): Result<ForecastResponse>
-    suspend fun getActionHistory(request: ActionHistoryRequest): Result<ActionHistoryResponse>
+    suspend fun getActionHistory(): Result<ActionHistoryResponse>
 }

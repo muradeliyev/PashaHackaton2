@@ -22,7 +22,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 
-private const val BASE_URL = "https://replica-thinkpad-juan-bent.trycloudflare.com/"
+private const val BASE_URL = "https://cordless-promises-drawing-moss.trycloudflare.com/"
 
 
 val coreDiModule = module {

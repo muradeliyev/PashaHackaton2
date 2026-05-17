@@ -51,7 +51,7 @@ class AppliedActionsViewModel(
 
     private fun loadData() {
         viewModelScope.launch {
-            val result = pashaApi.getActionHistory(ActionHistoryRequest(branch = DefaultBranch, ""))
+            val result = pashaApi.getActionHistory()
 
             result.onSuccess { response ->
                 val rows = response.items.map { it.toActionRowItem() }

@@ -56,12 +56,10 @@ class PashaApiImpl(
         }
     }
 
-    override suspend fun getActionHistory(request: ActionHistoryRequest): Result<ActionHistoryResponse> {
+    override suspend fun getActionHistory(): Result<ActionHistoryResponse> {
         return runCatching {
             httpClient.get("v1/actions/history") {
                 contentType(ContentType.Application.Json)
-                parameter("branch", value = request.branch)
-                parameter("family", value = request.family)
             }.body()
         }
     }
